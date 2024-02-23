@@ -73,8 +73,8 @@ const smtpTransPort = nodemailer.createTransport({
     secure: false,
     requireTLS: true,
     auth: {
-        user: "wjdgus3044@naver.com",
-        pass: "",
+        user: "wjdgus3044@naver.com", // 네이버 계정 이메일
+        pass: "" // 네이버 계정 비밀번호
     },
     tls: {
         rejectUnauthorized: false,
@@ -131,13 +131,8 @@ app.get("/board", async (req, res) => {
         page = totalPage;
     }
 
-    let offset = (page - 1) * limit;
+    let offset = (totalPage == 0) ? 0 : (page - 1) * limit; // row가 없을경우 offset을 0으로 설정 (오류 방지)
 
-    let count = await models.board.count();
-
-    if (count == 0) {
-        offset = 0;
-    }
     const boardList = await models.board.findAll({
         include: [
             {
@@ -289,9 +284,10 @@ app.post("/emailVerify", async (req, res) => {
     }
     const number = Math.floor(100000 + Math.random() * 900000);
     req.session.verifyNum = number;
-    console.log("인증번호 : " + number);
 
-    const { email } = req.body; //사용자가 입력한 이메일
+    const { email } = req.body;
+
+    console.log("인증번호 : " + number); // 진짜 보내진 않음
     return res.send("success");
     // const mailOptions = {
     //     from: "wjdgus3044@naver.com", // 발신자 이메일 주소.
@@ -396,7 +392,7 @@ app.get("/member/:id", async (req, res) => {
     res.render("mypage", { userData, postData, user: req.user });
 });
 
-// 회원정보 수정 페이지
+// 회원정보 업데이트 페이지
 app.get("/member/:id/update", async (req, res) => {
     let { id } = req.params;
 
@@ -484,3 +480,31 @@ app.put("/updateUser", async (req, res) => {
         res.status(500).send("error");
     }
 });
+
+// 회원 탙퇴 페이지
+app.get('/member/:id/delete', (req, res)=>{
+    const { id } = req.params
+
+    if (!req.isAuthenticated() || req.user.id != id) {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.write("<script>alert('접근 권한이 없습니다.')</script>");
+        res.write("<script>location.href='/'</script>");
+        return;
+    }
+
+    res.render('member-delete', {user : req.user, idForDelete : id})
+})
+
+// 회원 탈퇴
+app.delete('/member/:id', async (req, res)=>{
+    let {id} = req.params
+    await models.board.destroy({where : {writer : id}})
+    await models.member.destroy({where : {id}})
+    .then(()=>{
+        req.logout(() => {
+            return res.status(200).send('success')
+        });
+    }).catch(()=>{
+        return res.status(500).send('fail')
+    })
+})

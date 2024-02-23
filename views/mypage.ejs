@@ -14,7 +14,10 @@
     <section class="section">
         <div class="container">
             <h2 class="title"><%= userData.nickname %>님의 마이페이지</h2>
+            <% if((user && user.id == userData.id)){ %>
             <button type="button" onclick="location.href='/member/<%= userData.id%>/update'">회원정보 수정</button>
+            <button type="button" onclick="location.href='/member/<%= userData.id%>/delete'">회원 탈퇴</button>
+            <% } %>
             <h3 class="subtitle">최근 작성글</h3>
             <table class="recent-post">
                 <% for(let i of postData){ %>

@@ -1,0 +1,11 @@
+*{margin: 0; padding: 0; box-sizing: border-box;}
+li,ol,ul{list-style: none;}
+a{text-decoration: none;}
+
+.section{width: 100%;}
+.section .container{width: 100%; max-width: 500px; margin: 0 auto;}
+.section .container .title{text-align: center; padding:24px 0;} 
+.section .container .info{width: 100%; height: 300px; background-color: whitesmoke; padding: 24px;}
+.section .container .checkbox-wrapper{text-align: center; padding:24px 0 12px;}
+.section .container .btn-wrapper{text-align: center; padding:12px 0;}
+.section .container .btn-wrapper > button{padding:5px 12px;}
