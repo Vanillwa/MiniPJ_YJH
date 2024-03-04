@@ -59,7 +59,7 @@ function Login() {
 								<strong>비밀번호</strong>를 입력해주세요.
 							</p>
 							<div className="buttons">
-								<button type="button" id="sign-in" className="sign-in" onClick={()=>send(this.form)}>
+								<button type="button" id="sign-in" className="sign-in">
 									로그인
 								</button>
 								<button type="button" className="create">
